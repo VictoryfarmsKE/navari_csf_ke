@@ -47,9 +47,9 @@ def apply_filters(query, filters, company_currency, salary_slip, salary_detail):
 
 	for filter_key, filter_value in filters.items():
 		if filter_key == "from_date":
-			query = query.where(salary_slip.start_date == filter_value)
+			query = query.where(salary_slip.start_date >= filter_value)
 		elif filter_key == "to_date":
-			query = query.where(salary_slip.end_date == filter_value)
+			query = query.where(salary_slip.end_date <= filter_value)
 		elif filter_key == "company":
 			query = query.where(salary_slip.company == filter_value)
 		elif filter_key == "salary_component":
