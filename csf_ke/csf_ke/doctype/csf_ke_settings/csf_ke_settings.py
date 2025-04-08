@@ -6,7 +6,7 @@ from frappe import _
 from frappe.model.document import Document
 
 
-class SalesInvoiceSettings(Document):
+class CSFKESettings(Document):
 	
 	def before_save(self):
 		self.toggle_item_code_mandatory()

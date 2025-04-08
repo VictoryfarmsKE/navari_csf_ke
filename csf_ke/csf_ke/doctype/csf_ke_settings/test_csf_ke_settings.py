@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestSalesInvoiceSettings(FrappeTestCase):
+class TestCSFKESettings(FrappeTestCase):
 	pass

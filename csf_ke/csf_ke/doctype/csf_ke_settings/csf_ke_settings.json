@@ -5,8 +5,13 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "sales_invoice_tab",
+  "sales_invoice_section",
   "set_item_code_mandatory",
-  "column_break_bgjq"
+  "column_break_bgjq",
+  "vat_withholding_section",
+  "submit_journal_entry",
+  "column_break_nsyj"
  ],
  "fields": [
   {
@@ -18,16 +23,41 @@
   {
    "fieldname": "column_break_bgjq",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sales_invoice_tab",
+   "fieldtype": "Tab Break",
+   "label": "Sales Invoice"
+  },
+  {
+   "fieldname": "sales_invoice_section",
+   "fieldtype": "Section Break",
+   "label": "Sales Invoice"
+  },
+  {
+   "fieldname": "vat_withholding_section",
+   "fieldtype": "Section Break",
+   "label": "VAT Withholding"
+  },
+  {
+   "fieldname": "column_break_nsyj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "submit_journal_entry",
+   "fieldtype": "Check",
+   "label": "Submit Journal Entry"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-03-17 10:34:21.865325",
+ "modified": "2025-04-08 11:23:57.218011",
  "modified_by": "Administrator",
  "module": "CSF KE",
- "name": "Sales Invoice Settings",
+ "name": "CSF KE Settings",
  "owner": "Administrator",
  "permissions": [
   {
@@ -41,6 +71,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
