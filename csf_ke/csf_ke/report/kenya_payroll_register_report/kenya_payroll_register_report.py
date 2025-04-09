@@ -27,7 +27,7 @@ def execute(filters=None):
 		if not emp_det:
 			continue
 
-		row = [ss.name, ss.employee, ss.employee_name, emp_det.date_of_joining, emp_det.national_id, emp_det.nssf_no, emp_det.nhif_no, emp_det.tax_id, 
+		row = [ss.name, ss.employee, ss.employee_name, emp_det.date_of_joining, emp_det.national_id, emp_det.nssf_no, emp_det.health_insurance_id, emp_det.tax_id, 
 		ss.bank_name, ss.bank_account_no, ss.branch, ss.department, ss.designation,
 		ss.company, ss.start_date, ss.end_date, ss.leave_without_pay, ss.payment_days]
 
@@ -68,7 +68,7 @@ def get_columns(salary_slips):
 		_("Date of Joining") + "::80",
 		_("National ID") + "::90",
 		_("NSSF No") + "::90",
-		_("NHIF No") + "::90",
+		_("SHIF No") + "::90",
 		_("KRA Pin") + "::100",
 		_("Bank Name") + ":Link/Salary Slip:100",
 		_("Bank Account No") + ":Link/Salary Slip:120",		
@@ -85,7 +85,7 @@ def get_columns(salary_slips):
 	"""
 	columns = [
 		_("Salary Slip ID") + ":Link/Salary Slip:150",_("Employee") + ":Link/Employee:120", _("Employee Name") + "::140",
-		_("Date of Joining") + "::80",_("National ID") + "::90",_("NSSF No") + "::90",_("NHIF No") + "::90",
+		_("Date of Joining") + "::80",_("National ID") + "::90",_("NSSF No") + "::90",_("SHIF No") + "::90",
 		_("KRA Pin") + "::100",_("Bank Name") + ":Link/Salary Slip:100",_("Bank Account No") + ":Link/Salary Slip:120",
 		_("Branch") + ":Link/Branch:120", _("Department") + ":Link/Department:120",
 		_("Designation") + ":Link/Designation:120", _("Company") + ":Link/Company:120", _("Start Date") + "::80",
@@ -162,7 +162,7 @@ def get_employee_doj_map():
 		employee.date_of_joining.as_("date_of_joining"),
 		employee.national_id.as_("national_id"),
 		employee.nssf_no.as_("nssf_no"),
-		employee.nhif_no.as_("nhif_no"),
+		employee.health_insurance_id.as_("health_insurance_id"),
 		employee.tax_id.as_("tax_id")
 	)
 	
