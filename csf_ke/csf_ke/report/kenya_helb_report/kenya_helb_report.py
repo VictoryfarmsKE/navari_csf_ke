@@ -43,22 +43,27 @@ def get_columns():
 	return columns
 
 def apply_filters(query, filters, company_currency, salary_slip, salary_detail):
-	doc_status = {"Draft": 0, "Submitted": 1, "Cancelled": 2}
+    doc_status = {"Draft": 0, "Submitted": 1, "Cancelled": 2}
 
-	for filter_key, filter_value in filters.items():
-		if filter_key == "from_date":
-			query = query.where(salary_slip.start_date == filter_value)
-		elif filter_key == "to_date":
-			query = query.where(salary_slip.end_date == filter_value)
-		elif filter_key == "company":
-			query = query.where(salary_slip.company == filter_value)
-		elif filter_key == "salary_component":
-			query = query.where(salary_detail.salary_component == filter_value)
-		elif filter_key == "currency" and filter_value != company_currency:
-			query = query.where(salary_slip.currency == filter_value)
-		elif filter_key == "docstatus":
-			query = query.where(salary_slip.docstatus == doc_status.get(filter_value, 0))
-	return query
+    for filter_key, filter_value in filters.items():
+        if filter_key == "from_date":
+            from_date = filter_value
+        elif filter_key == "to_date":
+            to_date = filter_value
+        elif filter_key == "company":
+            query = query.where(salary_slip.company == filter_value)
+        elif filter_key == "salary_component":
+            query = query.where(salary_detail.salary_component == filter_value)
+        elif filter_key == "currency" and filter_value != company_currency:
+            query = query.where(salary_slip.currency == filter_value)
+        elif filter_key == "docstatus":
+            query = query.where(salary_slip.docstatus == doc_status.get(filter_value, 0))
+    if filters.get("from_date") and filters.get("to_date"):
+        query = query.where(
+            (salary_slip.start_date >= filters.get("from_date")) &
+            (salary_slip.end_date <= filters.get("to_date"))
+        )
+    return query
 
 
 def get_data(filters, company_currency):
