@@ -13,33 +13,15 @@ app_icon = "drag"
 app_color = "grey"
 app_email = "support@navari.co.ke"
 app_license = "GNU General Public License (v3)"
-required_apps = ["frappe/erpnext"]
+required_apps = ["erpnext", "hrms"]
 
 
 fixtures = [
     {
         "doctype": "Custom Field",
-        "filters": [
-            [
-                "name",
-                "in",
-                (
-                    "Employee-national_id",
-                    "Employee-nhif_no",
-                    "Employee-nssf_no",
-                    "Employee-tax_id",
-                    "Salary Component-p9a_tax_deduction_card_type",
-                    "Salary Component-custom_p10a_tax_deduction_card_type",
-                    "Item Tax-custom_column_break",
-                    "Item Tax-custom_tims_hscode",
-                    "Customer Group-custom_is_kra_pin_mandatory_in",
-                    "Company-custom_column_break_tunh2",
-                    "Company-custom_withholding_accounts",
-                    "Company-custom_default_debitors_withholding_account",
-                    "Company-custom_default_creditors_withholding_account",
-                    "Manufacturing Settings-custom_allow_default_time_logs"
-                ),
-            ]
+        "filters": [               
+            ["is_system_generated", "=", 0],
+            ["module", "=", "CSF KE"],
         ],
     },
     {
@@ -173,9 +155,7 @@ doc_events = {
     "Sales Invoice": {
         "before_submit": "csf_ke.csf_ke.overrides.sales_doc.validate_customer_kra"
     },
-    "Job Card":{
-        "before_submit": "csf_ke.csf_ke.overrides.job_card.before_submit"
-    }
+    "Job Card": {"before_submit": "csf_ke.csf_ke.overrides.job_card.before_submit"},
 }
 # Scheduled Tasks
 # ---------------
