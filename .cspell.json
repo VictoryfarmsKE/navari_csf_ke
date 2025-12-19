@@ -578,6 +578,23 @@
     "paye",
     "PAYE",
     "HELB",
-    "Cecypo"
+    "Cecypo",
+    "PSOA",
+    "tims",
+    "hscode",
+    "Statementof",
+    "ifsc",
+    "IFSC",
+    "navariltd",
+    "CSFKESMS",
+    "CSFKE",
+    "plsi",
+    "pwhich",
+    "sipm",
+    "tunh",
+    "contri",
+    "hscodes",
+    "financials",
+    "nosemgrep"
   ]
 }
