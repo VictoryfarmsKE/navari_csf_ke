@@ -26,10 +26,7 @@ fixtures = [
 				("Employee Dependent and Beneficiary",),
 			]
 		],
-	},
-	{
-		"doctype": "PSOA Template",
-	},
+	}
 ]
 
 process_soa_html = {
