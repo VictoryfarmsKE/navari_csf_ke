@@ -12,6 +12,7 @@ class CSFKESMSCenter(Document):
 	@frappe.whitelist()
 	def create_receiver_list(self):
 		rec, where_clause = "", ""
+		values = {}
 		if self.send_to == "All Customer Contact":
 			where_clause = """ and dl.link_doctype = 'Customer'
                 and cu.unsubscribed = 0
@@ -20,40 +21,48 @@ class CSFKESMSCenter(Document):
 
 			if self.customer:
 				where_clause += (
-					f""" and dl.link_name = '{self.customer.replace("'", "'")}'"""
+					""" and dl.link_name = %(customer)s"""
 					or " and ifnull(dl.link_name, '') != ''"
 				)
+				values["customer"] = self.customer
 
 			if self.customer_group:
-				where_clause += f" and cu.customer_group = '{self.customer_group}'"
+				where_clause += " and cu.customer_group = %(customer_group)s"
+				values["customer_group"] = self.customer_group
 
 			if self.territory:
-				where_clause += f" and cu.territory = '{self.territory}'"
+				where_clause += " and cu.territory = %(territory)s"
+				values["territory"] = self.territory
 
 			if self.start_date and self.end_date and self.end_date > self.start_date:
-				where_clause += f" and si.posting_date between '{self.start_date}' and '{self.end_date}'"
+				where_clause += " and si.posting_date between %(start_date)s and %(end_date)s"
+				values.update(start_date=self.start_date, end_date=self.end_date)
 
 			elif self.start_date:
-				where_clause += f" and si.posting_date >= '{self.start_date}'"
+				where_clause += " and si.posting_date >= %(start_date)s"
+				values["start_date"] = self.start_date
 
 			elif self.end_date:
-				where_clause += f" and si.posting_date <= '{self.end_date}'"
+				where_clause += " and si.posting_date <= %(end_date)s"
+				values["end_date"] = self.end_date
 
 		if self.send_to == "All Supplier Contact":
 			where_clause = " and dl.link_doctype = 'Supplier'"
 			if self.supplier:
 				where_clause += (
-					f""" and dl.link_name = '{self.supplier.replace("'", "'")}'"""
+					""" and dl.link_name = %(supplier)s"""
 					or " and ifnull(dl.link_name, '') != ''"
 				)
+				values["supplier"] = self.supplier
 
 		if self.send_to == "All Sales Partner Contact":
 			where_clause = " and dl.link_doctype = 'Sales Partner'"
 			if self.sales_partner:
 				where_clause += (
-					f"""and dl.link_name = '{self.sales_partner.replace("'", "'")}'"""
+					"""and dl.link_name = %(sales_partner)s"""
 					or " and ifnull(dl.link_name, '') != ''"
 				)
+				values["sales_partner"] = self.sales_partner
 
 		if self.send_to == "All Customer Contact":
 			rec = frappe.db.sql(
@@ -61,7 +70,8 @@ class CSFKESMSCenter(Document):
                 from `tabContact` c, `tabDynamic Link` dl INNER JOIN `tabCustomer` cu ON dl.link_name = cu.name
                 left join `tabSales Invoice` si on cu.name = si.customer_name
                 where ifnull(c.mobile_no,'')!='' and
-                c.docstatus != 2 and dl.parent = c.name{where_clause}"""
+                c.docstatus != 2 and dl.parent = c.name{where_clause}""",
+				values,
 			)
 
 		elif self.send_to in [
@@ -73,7 +83,8 @@ class CSFKESMSCenter(Document):
 				f"""select distinct(CONCAT(ifnull(c.first_name,''), ' ', ifnull(c.last_name,''))), c.mobile_no
                 from `tabContact` c, `tabDynamic Link` dl
                 where ifnull(c.mobile_no,'')!='' and
-                c.docstatus != 2 and dl.parent = c.name{where_clause}"""
+                c.docstatus != 2 and dl.parent = c.name{where_clause}""",
+				values,
 			)
 
 		elif self.send_to == "All Lead (Open)":
@@ -81,29 +92,35 @@ class CSFKESMSCenter(Document):
                 ifnull(mobile_no,'')!='' and docstatus != 2 and status='Open'"""
 
 			if self.territory:
-				query += f" and territory = '{self.territory}'"
+				query += " and territory = %(territory)s"
+				values["territory"] = self.territory
 
 			if self.start_date and self.end_date and self.start_date > self.end_date:
-				query += f" and creation between '{self.start_date}' and '{self.end_date}'"
+				query += " and creation between %(start_date)s and %(end_date)s"
+				values.update(start_date=self.start_date, end_date=self.end_date)
 
 			elif self.start_date:
-				query += f" and creation >= '{self.start_date}'"
+				query += " and creation >= %(start_date)s"
+				values["start_date"] = self.start_date
 
 			elif self.end_date:
-				query += f" and creation <= '{self.end_date}'"
+				query += " and creation <= %(end_date)s"
+				values["end_date"] = self.end_date
 
-			rec = frappe.db.sql(query)
+			rec = frappe.db.sql(query, values)
 
 		elif self.send_to == "All Employee (Active)":
 			where_clause = (
-				self.department and f""" and department = '{self.department.replace("'", "'")}'"""
+				self.department and """ and department = %(department)s"""
 			) or ""
-			where_clause += (self.branch and f""" and branch = '{self.branch.replace("'", "'")}'""") or ""
+			where_clause += (self.branch and """ and branch = %(branch)s""") or ""
+			values.update(department=self.department, branch=self.branch)
 
 			rec = frappe.db.sql(
 				f"""select employee_name, cell_number from
                 `tabEmployee` where status = 'Active' and docstatus < 2 and
-                ifnull(cell_number,'')!='' {where_clause}"""
+                ifnull(cell_number,'')!='' {where_clause}""",
+				values,
 			)
 
 		elif self.send_to == "All Sales Person":

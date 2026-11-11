@@ -14,6 +14,8 @@ def execute(filters=None):
 	if not filters:
 		filters = {}
 
+	validate_filters(filters)
+
 	columns = get_columns(filters)
 	entries = get_entries(filters)
 	item_details = get_item_details()
@@ -51,6 +53,16 @@ def execute(filters=None):
 		data.extend(group)
 
 	return columns, data
+
+
+def validate_filters(filters):
+	ALLOWED_DOCTYPES = ["Sales Order", "Sales Invoice", "Delivery Note"]
+
+	if not filters.get("doc_type"):
+		msgprint(_("Please select the document type first"), raise_exception=True)
+
+	if filters.get("doc_type") not in ALLOWED_DOCTYPES:
+		frappe.throw(_("{0}, {1} or {2} are the only allowed options.").format(*ALLOWED_DOCTYPES))
 
 
 def get_columns(filters):

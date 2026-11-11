@@ -6,6 +6,19 @@ from erpnext.accounts.utils import get_fiscal_year
 from frappe import _, scrub
 from frappe.utils import add_days, add_to_date, flt, getdate
 
+ALLOWED_DOC_TYPES = ["Sales Order", "Delivery Note", "Sales Invoice"]
+ALLOWED_TREE_TYPES = [
+	"Customer Group",
+	"Customer",
+	"Item Group",
+	"Item",
+	"Territory",
+	"Order Type",
+	"Project",
+	"User",
+	"Sales Person",
+]
+
 
 def execute(filters=None):
 	return Analytics(filters).run()
@@ -14,6 +27,7 @@ def execute(filters=None):
 class Analytics:
 	def __init__(self, filters=None):
 		self.filters = frappe._dict(filters or {})
+		self.validate_filters()
 		self.date_field = (
 			"creation"
 			if self.filters.tree_type == "Sales Person"
@@ -38,6 +52,13 @@ class Analytics:
 			"Dec",
 		]
 		self.get_period_date_ranges()
+
+	def validate_filters(self):
+		if self.filters.doc_type not in ALLOWED_DOC_TYPES:
+			frappe.throw(_("Invalid Document Type"))
+
+		if self.filters.tree_type not in ALLOWED_TREE_TYPES:
+			frappe.throw(_("Invalid Tree Type"))
 
 	def run(self):
 		self.get_columns()

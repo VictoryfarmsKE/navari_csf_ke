@@ -5,6 +5,7 @@
 import datetime
 
 import frappe
+from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_dimensions
 from erpnext.controllers.trends import get_period_date_ranges, get_period_month_ranges
 from frappe import _
 from frappe.utils import flt, formatdate, get_first_day, get_last_day, getdate
@@ -13,6 +14,8 @@ from frappe.utils import flt, formatdate, get_first_day, get_last_day, getdate
 def execute(filters=None):
 	if not filters:
 		filters = {}
+
+	validate_budget_dimensions(filters)
 
 	columns = get_columns(filters)
 	if filters.get("budget_against_filter"):
@@ -79,6 +82,15 @@ def execute(filters=None):
 	data = calculate_totals(data, filters)
 
 	return columns, data, None, chart
+
+
+def validate_budget_dimensions(filters):
+	dimensions = [d.get("document_type") for d in get_dimensions(with_cost_center_and_project=True)[0]]
+	if filters.get("budget_against") not in dimensions:
+		frappe.throw(
+			title=_("Invalid Accounting Dimension"),
+			msg=_("Budget Against must be a valid Accounting Dimension."),
+		)
 
 
 def filter_months(data, month1, month2):
